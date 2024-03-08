@@ -13,7 +13,7 @@ from transformers import TextIteratorStreamer, AutoTokenizer, AutoModelForCausal
 
 MODEL_NAME = "vikhyatk/moondream2"
 MODEL_CACHE = "checkpoints"
-MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2.tar"
+MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2-24-03-06.tar"
 
 def download_weights(url, dest):
     start = time.time()
@@ -31,14 +31,15 @@ class Predictor(BasePredictor):
             download_weights(MODEL_URL, MODEL_CACHE)
         self.tokenizer = AutoTokenizer.from_pretrained(
             MODEL_NAME,
-            revision="2024-03-04",
+            revision="2024-03-06",
             cache_dir=MODEL_CACHE
         )
         self.moondream = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
             trust_remote_code=True,
-            revision="2024-03-04",
+            revision="2024-03-06",
             torch_dtype=torch.float16,
+            attn_implementation="flash_attention_2",
             cache_dir=MODEL_CACHE
         ).to('cuda')
         self.moondream.eval()
