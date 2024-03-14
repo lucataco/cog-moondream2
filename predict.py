@@ -12,8 +12,9 @@ from threading import Thread
 from transformers import TextIteratorStreamer, AutoTokenizer, AutoModelForCausalLM
 
 MODEL_NAME = "vikhyatk/moondream2"
+REVISION = "2024-03-13"
 MODEL_CACHE = "checkpoints"
-MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2-24-03-06.tar"
+MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2-24-03-13.tar"
 
 def download_weights(url, dest):
     start = time.time()
@@ -31,13 +32,13 @@ class Predictor(BasePredictor):
             download_weights(MODEL_URL, MODEL_CACHE)
         self.tokenizer = AutoTokenizer.from_pretrained(
             MODEL_NAME,
-            revision="2024-03-06",
+            revision=REVISION,
             cache_dir=MODEL_CACHE
         )
         self.moondream = AutoModelForCausalLM.from_pretrained(
             MODEL_NAME,
             trust_remote_code=True,
-            revision="2024-03-06",
+            revision=REVISION,
             torch_dtype=torch.float16,
             attn_implementation="flash_attention_2",
             cache_dir=MODEL_CACHE
