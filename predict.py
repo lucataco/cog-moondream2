@@ -12,9 +12,9 @@ from threading import Thread
 from transformers import TextIteratorStreamer, AutoTokenizer, AutoModelForCausalLM
 
 MODEL_NAME = "vikhyatk/moondream2"
-REVISION = "2024-03-13"
+REVISION = "2024-07-23"
 MODEL_CACHE = "checkpoints"
-MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2-24-03-13.tar"
+MODEL_URL = "https://weights.replicate.delivery/default/vikhyatk/moondream2/2024-07-23/model.tar"
 
 def download_weights(url, dest):
     start = time.time()
