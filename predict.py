@@ -55,17 +55,29 @@ class Predictor(BasePredictor):
         pil_image = Image.open(image)
         image_embeds = self.moondream.encode_image(pil_image)
         streamer = TextIteratorStreamer(self.tokenizer, skip_special_tokens=True)
-        thread = Thread(
-            target=self.moondream.answer_question,
-            kwargs={
-                "image_embeds": image_embeds,
-                "question": prompt,
-                "tokenizer": self.tokenizer,
-                "streamer": streamer,
-            },
-        )
+        error = None
+
+        def generate():
+            nonlocal error
+            try:
+                self.moondream.answer_question(
+                    image_embeds=image_embeds,
+                    question=prompt,
+                    tokenizer=self.tokenizer,
+                    streamer=streamer,
+                )
+            except Exception as e:
+                error = e
+                # Unblock the consumer loop below, which otherwise waits forever.
+                streamer.end()
+
+        thread = Thread(target=generate)
         thread.start()
 
         for new_text in streamer:
             clean_text = re.sub("<$|<END$", "", new_text)
             yield clean_text
+
+        thread.join()
+        if error is not None:
+            raise error
